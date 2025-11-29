@@ -12,5 +12,6 @@ public class Cinema
     public string Image { get; set; }
     public List<Hall> Halls { get; set; }
     public List<CinemaMovies> Movies { get; set; }
+    // public List<CinemaMovies> Cinemas { get; set; }
     
 }

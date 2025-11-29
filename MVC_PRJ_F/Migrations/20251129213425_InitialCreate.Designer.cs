@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MVC_PRJ_F.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251126125437_IntialCreat4")]
-    partial class IntialCreat4
+    [Migration("20251129213425_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,6 +25,21 @@ namespace MVC_PRJ_F.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("CategoryMoveCategory", b =>
+                {
+                    b.Property<int>("CategoriesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MoviesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CategoriesId", "MoviesId");
+
+                    b.HasIndex("MoviesId");
+
+                    b.ToTable("CategoryMoveCategory");
+                });
+
             modelBuilder.Entity("MVC_PRJ_F.Data.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -33,8 +48,16 @@ namespace MVC_PRJ_F.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -109,6 +132,10 @@ namespace MVC_PRJ_F.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -127,6 +154,10 @@ namespace MVC_PRJ_F.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -180,6 +211,70 @@ namespace MVC_PRJ_F.Migrations
                     b.ToTable("Cinemas");
                 });
 
+            modelBuilder.Entity("MVC_PRJ_F.Models.CinemaMovies", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CinemaId")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("Date")
+                        .HasColumnType("time");
+
+                    b.Property<int>("HallId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MovieId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CinemaId");
+
+                    b.HasIndex("HallId");
+
+                    b.HasIndex("MovieId");
+
+                    b.ToTable("CinemaMovies");
+                });
+
+            modelBuilder.Entity("MVC_PRJ_F.Models.Hall", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CinemaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CinemaId");
+
+                    b.ToTable("Halls");
+                });
+
             modelBuilder.Entity("MVC_PRJ_F.Models.MovImage", b =>
                 {
                     b.Property<int>("Id")
@@ -225,7 +320,7 @@ namespace MVC_PRJ_F.Migrations
                     b.ToTable("MoveActors");
                 });
 
-            modelBuilder.Entity("MVC_PRJ_F.Models.Movie", b =>
+            modelBuilder.Entity("MVC_PRJ_F.Models.MoveCategory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -233,11 +328,24 @@ namespace MVC_PRJ_F.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("ActorId")
-                        .HasColumnType("int");
-
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
+
+                    b.Property<int>("MovieId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MoveCategories");
+                });
+
+            modelBuilder.Entity("MVC_PRJ_F.Models.Movie", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime2");
@@ -262,11 +370,34 @@ namespace MVC_PRJ_F.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ActorId");
-
-                    b.HasIndex("CategoryId");
-
                     b.ToTable("Movies");
+                });
+
+            modelBuilder.Entity("MVC_PRJ_F.Models.Otp", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Expiration")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("OtpCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Otps");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -402,6 +533,74 @@ namespace MVC_PRJ_F.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("MoveCategoryMovie", b =>
+                {
+                    b.Property<int>("CategoriesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MoviesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CategoriesId", "MoviesId");
+
+                    b.HasIndex("MoviesId");
+
+                    b.ToTable("MoveCategoryMovie");
+                });
+
+            modelBuilder.Entity("CategoryMoveCategory", b =>
+                {
+                    b.HasOne("MVC_PRJ_F.Models.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MVC_PRJ_F.Models.MoveCategory", null)
+                        .WithMany()
+                        .HasForeignKey("MoviesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MVC_PRJ_F.Models.CinemaMovies", b =>
+                {
+                    b.HasOne("MVC_PRJ_F.Models.Cinema", "Cinema")
+                        .WithMany("Movies")
+                        .HasForeignKey("CinemaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MVC_PRJ_F.Models.Hall", "Hall")
+                        .WithMany("Movies")
+                        .HasForeignKey("HallId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MVC_PRJ_F.Models.Movie", "Movie")
+                        .WithMany()
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cinema");
+
+                    b.Navigation("Hall");
+
+                    b.Navigation("Movie");
+                });
+
+            modelBuilder.Entity("MVC_PRJ_F.Models.Hall", b =>
+                {
+                    b.HasOne("MVC_PRJ_F.Models.Cinema", "Cinema")
+                        .WithMany("Halls")
+                        .HasForeignKey("CinemaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cinema");
+                });
+
             modelBuilder.Entity("MVC_PRJ_F.Models.MovImage", b =>
                 {
                     b.HasOne("MVC_PRJ_F.Models.Movie", null)
@@ -414,7 +613,7 @@ namespace MVC_PRJ_F.Migrations
             modelBuilder.Entity("MVC_PRJ_F.Models.MoveActor", b =>
                 {
                     b.HasOne("MVC_PRJ_F.Models.Actor", "Actor")
-                        .WithMany()
+                        .WithMany("Movies")
                         .HasForeignKey("ActorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -428,19 +627,6 @@ namespace MVC_PRJ_F.Migrations
                     b.Navigation("Actor");
 
                     b.Navigation("Movie");
-                });
-
-            modelBuilder.Entity("MVC_PRJ_F.Models.Movie", b =>
-                {
-                    b.HasOne("MVC_PRJ_F.Models.Actor", null)
-                        .WithMany("Movies")
-                        .HasForeignKey("ActorId");
-
-                    b.HasOne("MVC_PRJ_F.Models.Category", null)
-                        .WithMany("Movies")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -494,12 +680,34 @@ namespace MVC_PRJ_F.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MoveCategoryMovie", b =>
+                {
+                    b.HasOne("MVC_PRJ_F.Models.MoveCategory", null)
+                        .WithMany()
+                        .HasForeignKey("CategoriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MVC_PRJ_F.Models.Movie", null)
+                        .WithMany()
+                        .HasForeignKey("MoviesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MVC_PRJ_F.Models.Actor", b =>
                 {
                     b.Navigation("Movies");
                 });
 
-            modelBuilder.Entity("MVC_PRJ_F.Models.Category", b =>
+            modelBuilder.Entity("MVC_PRJ_F.Models.Cinema", b =>
+                {
+                    b.Navigation("Halls");
+
+                    b.Navigation("Movies");
+                });
+
+            modelBuilder.Entity("MVC_PRJ_F.Models.Hall", b =>
                 {
                     b.Navigation("Movies");
                 });

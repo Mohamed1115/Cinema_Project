@@ -789,3 +789,4 @@
 /home/mohamed/Code/Net/WEP/MVC_PRJ_F/MVC_PRJ_F/obj/Debug/net9.0/compressed/sc2fvdl7pf-3ioa1zy9yl.gz
 /home/mohamed/Code/Net/WEP/MVC_PRJ_F/MVC_PRJ_F/obj/Debug/net9.0/compressed/ayzwvdzlpi-ozomj3sxtn.gz
 /home/mohamed/Code/Net/WEP/MVC_PRJ_F/MVC_PRJ_F/obj/Debug/net9.0/compressed/s0vv16fuad-oahwfkttio.gz
+/home/mohamed/Code/Net/WEP/MVC_PRJ_F/MVC_PRJ_F/obj/Debug/net9.0/MVC_PRJ_F.sourcelink.json

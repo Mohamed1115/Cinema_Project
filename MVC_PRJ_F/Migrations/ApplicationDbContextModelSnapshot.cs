@@ -208,6 +208,70 @@ namespace MVC_PRJ_F.Migrations
                     b.ToTable("Cinemas");
                 });
 
+            modelBuilder.Entity("MVC_PRJ_F.Models.CinemaMovies", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CinemaId")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("Date")
+                        .HasColumnType("time");
+
+                    b.Property<int>("HallId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MovieId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CinemaId");
+
+                    b.HasIndex("HallId");
+
+                    b.HasIndex("MovieId");
+
+                    b.ToTable("CinemaMovies");
+                });
+
+            modelBuilder.Entity("MVC_PRJ_F.Models.Hall", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CinemaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CinemaId");
+
+                    b.ToTable("Halls");
+                });
+
             modelBuilder.Entity("MVC_PRJ_F.Models.MovImage", b =>
                 {
                     b.Property<int>("Id")
@@ -269,7 +333,7 @@ namespace MVC_PRJ_F.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MoveCategory");
+                    b.ToTable("MoveCategories");
                 });
 
             modelBuilder.Entity("MVC_PRJ_F.Models.Movie", b =>
@@ -496,6 +560,44 @@ namespace MVC_PRJ_F.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MVC_PRJ_F.Models.CinemaMovies", b =>
+                {
+                    b.HasOne("MVC_PRJ_F.Models.Cinema", "Cinema")
+                        .WithMany("Movies")
+                        .HasForeignKey("CinemaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MVC_PRJ_F.Models.Hall", "Hall")
+                        .WithMany("Movies")
+                        .HasForeignKey("HallId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MVC_PRJ_F.Models.Movie", "Movie")
+                        .WithMany()
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cinema");
+
+                    b.Navigation("Hall");
+
+                    b.Navigation("Movie");
+                });
+
+            modelBuilder.Entity("MVC_PRJ_F.Models.Hall", b =>
+                {
+                    b.HasOne("MVC_PRJ_F.Models.Cinema", "Cinema")
+                        .WithMany("Halls")
+                        .HasForeignKey("CinemaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cinema");
+                });
+
             modelBuilder.Entity("MVC_PRJ_F.Models.MovImage", b =>
                 {
                     b.HasOne("MVC_PRJ_F.Models.Movie", null)
@@ -591,6 +693,18 @@ namespace MVC_PRJ_F.Migrations
                 });
 
             modelBuilder.Entity("MVC_PRJ_F.Models.Actor", b =>
+                {
+                    b.Navigation("Movies");
+                });
+
+            modelBuilder.Entity("MVC_PRJ_F.Models.Cinema", b =>
+                {
+                    b.Navigation("Halls");
+
+                    b.Navigation("Movies");
+                });
+
+            modelBuilder.Entity("MVC_PRJ_F.Models.Hall", b =>
                 {
                     b.Navigation("Movies");
                 });
