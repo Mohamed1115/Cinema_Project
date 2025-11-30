@@ -8,89 +8,113 @@ namespace MVC_PRJ_F.Controllers
     public class MovieController : Controller
     {
 
-        private readonly IActorRepository _actorRepository;
-        private string ActorImagesPath =>
-            Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "ActorImage");
+        private readonly IMovieRepository _movieRepository;
+        private readonly IMovieSubImageRepository _subImageRepository;
+        private string MovieImagesPath =>
+            Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "MovieImage");
 
-        public ActorController(IActorRepository actorRepository)
+        public MovieController(IMovieRepository movieRepository, IMovieSubImageRepository subImageRepository)
         {
-            _actorRepository = actorRepository;
+            _movieRepository = movieRepository;
+            _subImageRepository = subImageRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var Act = await _actorRepository.GetAllAsync();
-            return View(Act);
+            var mov = await _movieRepository.GetAllAsync();
+            return View(mov);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetById(int id)
         {
-            var Act = await _actorRepository.GetActorWithMovies(id);
-            if (Act == null)
+            var mov = await _movieRepository.GetMovieWithImage(id);
+            if (mov == null)
                 return NotFound();
-
-            return View(Act);
+            //
+            return View();
         }
 
         [HttpGet]
         public IActionResult Create()
         {
-            var actor = new Actor();
-            return View(actor);
+            var movie = new Movie();
+            return View(movie);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Actor actor, IFormFile Imag)
+        public async Task<IActionResult> Create(Movie movie, IFormFile Imag, List<IFormFile> SubImages)
         {
             if (!ModelState.IsValid)
-            {
-                return View(actor);
-            }
+                return View(movie);
 
-            if (Imag.Length > 0)
+            // 1️⃣ رفع الصورة الأساسية MainImage
+            if (Imag != null && Imag.Length > 0)
             {
                 var fileName = Guid.NewGuid().ToString() + Path.GetExtension(Imag.FileName);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), MovieImagesPath, fileName);
 
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), ActorImagesPath, fileName);
+                using var stream = new FileStream(filePath, FileMode.Create);
+                await Imag.CopyToAsync(stream);
 
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    Imag.CopyTo(stream);
-                }
-
-                actor.Image = fileName;
+                movie.MainImage = fileName;
             }
-            await _actorRepository.CreatAsync(actor);
-            TempData["Success"] = "Actor has been added successfully.";
 
-            return RedirectToAction(nameof(GetById), new { id = actor.Id });
+            // 2️⃣ حفظ الفيلم
+            await _movieRepository.CreatAsync(movie);
+
+            // 3️⃣ رفع الصور الفرعية (SubImages)
+            if (SubImages != null && SubImages.Count > 0)
+            {
+                foreach (var img in SubImages)
+                {
+                    if (img.Length > 0)
+                    {
+                        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName);
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), MovieImagesPath, fileName);
+
+                        using var stream = new FileStream(filePath, FileMode.Create);
+                        await img.CopyToAsync(stream);
+
+                        var subImage = new MovImage()
+                        {
+                            MovieId = movie.Id,
+                            ImageName = fileName
+                        };
+
+                        await _subImageRepository.CreateAsync(subImage);
+                    }
+                }
+            }
+
+            TempData["Success"] = "Movie has been added successfully.";
+            return RedirectToAction(nameof(GetById), new { id = movie.Id });
         }
+
 
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
-            var actor = await _actorRepository.GetByIdAsync(id);
+            var movie = await _movieRepository.GetByIdAsync(id);
 
-            if (actor == null)
+            if (movie == null)
             {
                 return NotFound();
             }
 
             // مسح الصورة
-            if (!string.IsNullOrEmpty(actor.Image))
+            if (!string.IsNullOrEmpty(movie.MainImage))
             {
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), ActorImagesPath, actor.Image);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), MovieImagesPath, movie.MainImage);
                 if (System.IO.File.Exists(filePath))
                 {
                     System.IO.File.Delete(filePath);
                 }
             }
-            await _actorRepository.DeleteAsync(id);
-            TempData["Success"] = "Actor has been deleted successfully.";
+            await _movieRepository.DeleteAsync(id);
+            TempData["Success"] = "Movie has been deleted successfully.";
 
             return RedirectToAction(nameof(GetAll));
         }
@@ -98,32 +122,32 @@ namespace MVC_PRJ_F.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var actor = await _actorRepository.GetByIdAsync(id);
-            if (actor == null)
+            var movie = await _movieRepository.GetByIdAsync(id);
+            if (movie == null)
             {
                 return NotFound();
             }
-            return View(actor);
+            return View(movie);
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Edit(Actor act, IFormFile Imag)
+        public async Task<IActionResult> Edit(Movie mov, IFormFile Imag)
         {
             if (!ModelState.IsValid)
             {
-                return View(act);
+                return View(mov);
             }
 
             // var dbDoc = _db.Doctors.Find(d.Id);
-            var actor = await _actorRepository.GetByIdAsync(act.Id);
-            if (actor == null)
+            var movie = await _movieRepository.GetByIdAsync(mov.Id);
+            if (movie == null)
             {
                 return NotFound();
             }
             if (Imag is not null && Imag.Length > 0)
             {
-                var oldfilePath = Path.Combine(Directory.GetCurrentDirectory(), ActorImagesPath, actor.Image);
+                var oldfilePath = Path.Combine(Directory.GetCurrentDirectory(), MovieImagesPath, movie.MainImage);
                 if (System.IO.File.Exists(oldfilePath))
                 {
                     System.IO.File.Delete(oldfilePath);
@@ -134,7 +158,7 @@ namespace MVC_PRJ_F.Controllers
 
                 var fileName = Guid.NewGuid().ToString() + Path.GetExtension(Imag.FileName);
 
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), ActorImagesPath, fileName);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), MovieImagesPath, fileName);
 
 
                 using (var stream = new FileStream(filePath, FileMode.Create))
@@ -142,17 +166,19 @@ namespace MVC_PRJ_F.Controllers
                     Imag.CopyTo(stream);
                 }
 
-                actor.Image = fileName;
+                movie.MainImage = fileName;
             }
 
-            actor.Name = act.Name;
-            actor.DateOfBirth = act.DateOfBirth;
-            actor.Gender = act.Gender;
+            movie.Description= mov.Description;
+            movie.Title = mov.Title;
+            movie.DateTime=mov.DateTime;
+            // movie.DateOfBirth = mov.DateOfBirth;
+            // movie.Gender = mov.Gender;
 
-            await _actorRepository.UpdateAsync(actor);
-            TempData["Success"] = "Actor has been updated successfully.";
+            await _movieRepository.UpdateAsync(movie);
+            TempData["Success"] = "Movie has been updated successfully.";
 
-            return RedirectToAction(nameof(GetById), new { id = actor.Id });
+            return RedirectToAction(nameof(GetById), new { id = movie.Id });
         }
     }
 }

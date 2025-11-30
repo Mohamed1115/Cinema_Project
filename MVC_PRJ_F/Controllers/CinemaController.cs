@@ -26,12 +26,26 @@ public class CinemaController:Controller
     [HttpGet]
     public async Task<IActionResult> GetById(int id)
     {
-        var Cnm = await _cinemaRepository.GetCinemaWithHallsAndMovies(id);
+        var Cnm = await _cinemaRepository.GetCinemaWithMovies(id);
         if (Cnm == null)
             return NotFound();
 
         return View(Cnm);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetHalls(int id)
+    {
+        var Cnm = await _cinemaRepository.GetMovieWithHalls(id);
+        if (Cnm == null)
+            return NotFound();
+        return View(Cnm);
+    }
+    
+    
+    
+    
+    
 
     [HttpGet]
     [Authorize]
@@ -148,6 +162,11 @@ public class CinemaController:Controller
         }
         
         cinema.Name = Cnm.Name;
+        cinema.Address = Cnm.Address;
+        cinema.Country = Cnm.Country;
+        cinema.City = Cnm.City;
+        cinema.Phone = Cnm.Phone;
+        cinema.Email = Cnm.Email;
         // cinema.DateOfBirth = Cnm.DateOfBirth;
         // cinema.Gender = Cnm.Gender;
         

@@ -7,8 +7,10 @@ public class CinemaMovies
     public Movie Movie { get; set; }
     public int CinemaId { get; set; }
     public Cinema Cinema { get; set; }
+    
+    public int Price { get; set; }
 
     public int HallId { get; set; }
     public Hall Hall { get; set; }
-    public TimeSpan Date { get; set; }
+    public TimeOnly Time { get; set; }
 }

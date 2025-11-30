@@ -9,6 +9,6 @@ public class Hall
     public string Type { get; set; }
     public int CinemaId { get; set; }
     public Cinema Cinema { get; set; }
-    public List<CinemaMovies> Movies { get; set; }
+    public List<CinemaMovies> CinemaMovies { get; set; }
     
 }

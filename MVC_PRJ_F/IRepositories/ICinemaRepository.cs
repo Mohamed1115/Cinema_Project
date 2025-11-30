@@ -4,5 +4,6 @@ namespace MVC_PRJ_F.IRepositories;
 
 public interface ICinemaRepository:IRepository<Cinema>
 {
-    Task<Cinema?> GetCinemaWithHallsAndMovies(int id);
+    Task<Cinema?> GetMovieWithHalls(int id);
+    Task<Cinema?> GetCinemaWithMovies(int id);
 }

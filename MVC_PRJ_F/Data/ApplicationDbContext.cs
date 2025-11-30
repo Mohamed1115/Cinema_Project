@@ -15,11 +15,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     }
 
     public DbSet<Actor> Actors { get; set; }
-    DbSet<Movie> Movies { get; set; }
+    public DbSet<Movie> Movies { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Cinema> Cinemas { get; set; }
     DbSet<MoveActor> MoveActors { get; set; }
-    DbSet<MovImage> MovImages { get; set; }
+    public DbSet<MovImage> MovImages { get; set; }
     public DbSet<CinemaMovies> CinemaMovies { get; set; }
     public DbSet<Hall> Halls { get; set; }
     public DbSet<MoveCategory> MoveCategories { get; set; }
@@ -33,7 +33,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         // Hall -> CinemaMovies (NO cascade)
         modelBuilder.Entity<CinemaMovies>()
             .HasOne(cm => cm.Hall)
-            .WithMany(h => h.Movies)
+            .WithMany(h => h.CinemaMovies)
             .HasForeignKey(cm => cm.HallId)
             .OnDelete(DeleteBehavior.Restrict);
 
@@ -42,6 +42,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .HasOne(cm => cm.Cinema)
             .WithMany(c => c.Movies)
             .HasForeignKey(cm => cm.CinemaId)
+            .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<CinemaMovies>()
+            .HasOne(cm => cm.Movie)
+            .WithMany() // أو WithMany(m => m.CinemaMovies) لو عايز في Movie
+            .HasForeignKey(cm => cm.MovieId)
             .OnDelete(DeleteBehavior.Restrict);
 
         // Cinema -> Halls (safe to keep Cascade)

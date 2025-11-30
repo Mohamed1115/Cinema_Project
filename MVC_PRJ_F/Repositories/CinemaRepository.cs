@@ -11,12 +11,33 @@ public class CinemaRepository:Repository<Cinema>, ICinemaRepository
     {
     }
 
-    public async Task<Cinema?> GetCinemaWithHallsAndMovies(int id)
+    public async Task<Cinema?> GetMovieWithHalls(int id)
     {
         return await _context.Cinemas
-            .Include(a => a.Halls)
-            .ThenInclude(m => m.Movies)
+            .Include(a => a.Movies)
+            .ThenInclude(m => m.Hall)
             .FirstOrDefaultAsync(a => a.Id == id);
     }
+    
+    public async Task<Cinema?> GetCinemaWithMovies(int id)
+    {
+        var cinema = await _context.Cinemas
+            .Include(c => c.Movies)
+            .ThenInclude(cm => cm.Movie)
+            .FirstOrDefaultAsync(c => c.Id == id);
+
+        if (cinema != null)
+        {
+            // إزالة التكرارات بحسب MovieId
+            cinema.Movies = cinema.Movies
+                .GroupBy(cm => cm.MovieId)
+                .Select(g => g.First())
+                .ToList();
+        }
+
+        return cinema;
+    }
+    
+    
 
 }
