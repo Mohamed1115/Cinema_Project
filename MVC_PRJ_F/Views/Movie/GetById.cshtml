@@ -1,0 +1,108 @@
+@{
+    ViewData["Title"] = "Movie Details";
+}
+
+@model Movie
+
+<div class="card mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+            <span class="fas fa-film me-2"></span>@Model.Title
+        </h5>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div class="d-flex gap-2">
+                <a class="btn btn-sm btn-falcon-default" asp-action="Edit" asp-route-id="@Model.Id">
+                    <span class="fas fa-edit me-1"></span>Edit
+                </a>
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this movie?');">
+                    <button type="submit" class="btn btn-sm btn-falcon-danger">
+                        <span class="fas fa-trash me-1"></span>Delete
+                    </button>
+                </form>
+            </div>
+        }
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                @if (!string.IsNullOrEmpty(Model.MainImage))
+                {
+                    <img src="~/images/MovieImage/@Model.MainImage" alt="@Model.Title" class="img-fluid rounded mb-3" />
+                }
+                else
+                {
+                    <img src="~/assets/img/generic/movie-1.jpg" alt="@Model.Title" class="img-fluid rounded mb-3" />
+                }
+
+                @if (Model.SubImages != null && Model.SubImages.Any())
+                {
+                    <div class="row g-2">
+                        @foreach (var subImage in Model.SubImages)
+                        {
+                            <div class="col-6">
+                                <img src="~/images/MovieImage/@subImage.ImageName" alt="Sub Image" class="img-fluid rounded" />
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="col-md-8">
+                <h3>@Model.Title</h3>
+                
+                <div class="mb-3">
+                    @if (Model.Status)
+                    {
+                        <span class="badge bg-success">Now Showing</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-info">Coming Soon</span>
+                    }
+                    <span class="ms-2">
+                        <span class="fas fa-calendar me-1"></span>@Model.DateTime.ToString("MMMM dd, yyyy")
+                    </span>
+                </div>
+
+                <div class="mb-3">
+                    <h6>Description</h6>
+                    <p>@Model.Description</p>
+                </div>
+
+                @if (Model.Categories != null && Model.Categories.Any())
+                {
+                    <div class="mb-3">
+                        <h6>Categories</h6>
+                        <div>
+                            @foreach (var movieCategory in Model.Categories)
+                            {
+                                <span class="badge bg-secondary me-1">@(movieCategory.Category?.Name ?? "Unknown")</span>
+                            }
+                        </div>
+                    </div>
+                }
+
+                @if (Model.Actors != null && Model.Actors.Any())
+                {
+                    <div class="mb-3">
+                        <h6>Actors</h6>
+                        <div>
+                            @foreach (var movieActor in Model.Actors)
+                            {
+                                <span class="badge bg-primary me-1">@(movieActor.Actor?.Name ?? "Unknown")</span>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <div class="mt-4">
+                    <a class="btn btn-primary" href="#">
+                        <span class="fas fa-ticket-alt me-1"></span>Book Tickets
+                    </a>
+                    <a asp-action="Index" class="btn btn-falcon-default ms-2">Back to List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

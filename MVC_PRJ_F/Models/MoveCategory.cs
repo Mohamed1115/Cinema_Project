@@ -4,7 +4,7 @@ public class MoveCategory
 {
     public int Id { get; set; }
     public int CategoryId { get; set; }
-    public List<Category> Categories { get; set; }
+    public Category Category { get; set; }
     public int MovieId { get; set; }
-    public List<Movie> Movies { get; set; }
+    public Movie Movie { get; set; }
 }

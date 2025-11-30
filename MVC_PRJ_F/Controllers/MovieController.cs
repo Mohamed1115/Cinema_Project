@@ -20,6 +20,13 @@ namespace MVC_PRJ_F.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            var mov = await _movieRepository.GetAllAsync();
+            return View(mov);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var mov = await _movieRepository.GetAllAsync();

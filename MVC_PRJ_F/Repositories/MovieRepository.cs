@@ -15,7 +15,9 @@ public class MovieRepository:Repository<Movie>,IMovieRepository
         return await _context.Movies
             .Include(m => m.SubImages)
             .Include(m => m.Actors)
+                .ThenInclude(ma => ma.Actor)
             .Include(m => m.Categories)
+                .ThenInclude(mc => mc.Category)
             .FirstOrDefaultAsync(m => m.Id == id);
     }
 

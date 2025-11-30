@@ -4692,24 +4692,27 @@
     ]
   },
   "packageFolders": {
-    "/home/mohamed/.nuget/packages/": {}
+    "C:\\Users\\mmm81\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/mohamed/Code/Net/WEP/MVC_PRJ_F/MVC_PRJ_F/MVC_PRJ_F.csproj",
+      "projectUniqueName": "C:\\Users\\mmm81\\Source\\Repos\\Cinema_Project\\MVC_PRJ_F\\MVC_PRJ_F.csproj",
       "projectName": "MVC_PRJ_F",
-      "projectPath": "/home/mohamed/Code/Net/WEP/MVC_PRJ_F/MVC_PRJ_F/MVC_PRJ_F.csproj",
-      "packagesPath": "/home/mohamed/.nuget/packages/",
-      "outputPath": "/home/mohamed/Code/Net/WEP/MVC_PRJ_F/MVC_PRJ_F/obj/",
+      "projectPath": "C:\\Users\\mmm81\\Source\\Repos\\Cinema_Project\\MVC_PRJ_F\\MVC_PRJ_F.csproj",
+      "packagesPath": "C:\\Users\\mmm81\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\mmm81\\Source\\Repos\\Cinema_Project\\MVC_PRJ_F\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/mohamed/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\mmm81\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -4727,8 +4730,7 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      },
-      "SdkAnalysisLevel": "9.0.300"
+      }
     },
     "frameworks": {
       "net8.0": {
@@ -4768,20 +4770,6 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[8.0.20, 8.0.20]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Host.linux-x64",
-            "version": "[8.0.20, 8.0.20]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Ref",
-            "version": "[8.0.20, 8.0.20]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"
@@ -4790,7 +4778,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/home/mohamed/.dotnet/sdk/9.0.305/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

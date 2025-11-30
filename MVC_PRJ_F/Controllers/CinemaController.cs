@@ -17,6 +17,13 @@ public class CinemaController:Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> Index()
+    {
+        var Cnm = await _cinemaRepository.GetAllAsync();
+        return View(Cnm);
+    }
+
+    [HttpGet]
     public async Task<IActionResult> GetAll()
     {
         var Cnm = await _cinemaRepository.GetAllAsync();

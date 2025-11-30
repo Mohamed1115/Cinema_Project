@@ -1,10 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using MVC_PRJ_F.Data;
+using MVC_PRJ_F.IRepositories;
 using MVC_PRJ_F.Models;
 
 namespace MVC_PRJ_F.Repositories;
 
-public class HallRepository:Repository<Hall>
+public class HallRepository:Repository<Hall>, IHallRepository
 {
     public HallRepository(ApplicationDbContext context) : base(context)
     {

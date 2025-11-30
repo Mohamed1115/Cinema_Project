@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MVC_PRJ_F")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fa760d73567e293a95f79541168f496d4040b240")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6a7cb3b13b0195f5651b49a66bba3fe15578512c")]
 [assembly: System.Reflection.AssemblyProductAttribute("MVC_PRJ_F")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MVC_PRJ_F")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

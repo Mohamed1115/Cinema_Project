@@ -82,6 +82,10 @@ public class AccountController:Controller
     public IActionResult Login()
     {
         var vm = new LoginVM();
+        if (TempData["Email"] != null)
+        {
+            ViewBag.Email = TempData["Email"];
+        }
         return View(vm);
     }
 
@@ -99,11 +103,47 @@ public class AccountController:Controller
             TempData ["Error"]  = "Username or password is incorrect";
             return View(vm);
         }
-        var Don =  await _signInManager.PasswordSignInAsync(log, vm.Password,isPersistent:vm.RememberMe,lockoutOnFailure: true);
+        var userName = log.UserName ?? log.Email ?? vm.UserName;
+        var Don = await _signInManager.PasswordSignInAsync(userName, vm.Password, isPersistent: vm.RememberMe, lockoutOnFailure: true);
 
         if (!Don.Succeeded)
         {
-            TempData ["Error"]  = "Username or password is incorrect";
+            if (Don.IsLockedOut)
+            {
+                // إلغاء قفل الحساب تلقائياً إذا انتهت مدة القفل
+                if (log.LockoutEnd.HasValue && log.LockoutEnd.Value <= DateTimeOffset.UtcNow)
+                {
+                    await _userManager.SetLockoutEndDateAsync(log, null);
+                    await _userManager.ResetAccessFailedCountAsync(log);
+                    // إعادة المحاولة
+                    Don = await _signInManager.PasswordSignInAsync(userName, vm.Password, isPersistent: vm.RememberMe, lockoutOnFailure: true);
+                    if (Don.Succeeded)
+                    {
+                        TempData["Success"] = "Login Successful";
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+                
+                var lockoutEnd = log.LockoutEnd?.LocalDateTime;
+                if (lockoutEnd.HasValue && lockoutEnd.Value > DateTime.Now)
+                {
+                    var remainingTime = lockoutEnd.Value - DateTime.Now;
+                    TempData["Error"] = $"Your account is locked. Please try again after {remainingTime.Minutes} minutes and {remainingTime.Seconds} seconds.";
+                }
+                else
+                {
+                    TempData["Error"] = "Your account is locked. Please try again later.";
+                }
+                ViewBag.Email = vm.UserName; // حفظ البريد لعرضه في نموذج إلغاء القفل
+            }
+            else if (Don.IsNotAllowed)
+            {
+                TempData["Error"] = "Please confirm your email first.";
+            }
+            else
+            {
+                TempData["Error"] = "Username or password is incorrect";
+            }
             return View(vm);
         }
         TempData ["Success"]  = "Login Successful";
@@ -332,6 +372,30 @@ public class AccountController:Controller
     {
         await _signInManager.SignOutAsync();
         return View("logout");
+    }
+    
+    // إلغاء قفل الحساب يدوياً (للمسؤولين أو للاختبار)
+    [HttpPost]
+    public async Task<IActionResult> UnlockAccount(string email)
+    {
+        if (string.IsNullOrEmpty(email))
+        {
+            TempData["Error"] = "Email is required";
+            return RedirectToAction(nameof(Login));
+        }
+        
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+        {
+            TempData["Error"] = "User not found";
+            return RedirectToAction(nameof(Login));
+        }
+        
+        await _userManager.SetLockoutEndDateAsync(user, null);
+        await _userManager.ResetAccessFailedCountAsync(user);
+        
+        TempData["Success"] = "Account unlocked successfully. You can now login.";
+        return RedirectToAction(nameof(Login));
     }
     
     
