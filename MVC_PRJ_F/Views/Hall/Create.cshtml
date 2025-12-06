@@ -1,0 +1,90 @@
+@{
+    ViewData["Title"] = "Add New Hall";
+}
+
+@model Hall
+
+<div class="card card-enhanced">
+    <div class="card-header bg-gradient-primary">
+        <h5 class="mb-0 text-white">
+            <span class="fas fa-door-open me-2"></span>Add New Hall
+        </h5>
+    </div>
+    <div class="card-body">
+        @* عرض رسائل النجاح *@
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        
+        @* عرض رسائل الأخطاء *@
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>@TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" placeholder="e.g., Hall A" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Type" class="form-label"></label>
+                    <select asp-for="Type" class="form-select">
+                        <option value="">-- Select Type --</option>
+                        <option value="Standard">Standard</option>
+                        <option value="VIP">VIP</option>
+                        <option value="IMAX">IMAX</option>
+                        <option value="3D">3D</option>
+                        <option value="4DX">4DX</option>
+                    </select>
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Capacity" class="form-label"></label>
+                    <input asp-for="Capacity" type="number" class="form-control" min="1" placeholder="e.g., 150" />
+                    <span asp-validation-for="Capacity" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="CinemaId" class="form-label">Cinema</label>
+                    <input asp-for="CinemaId" type="number" class="form-control" readonly />
+                    <span asp-validation-for="CinemaId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3" placeholder="Enter hall description..."></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary btn-cinema">
+                    <span class="fas fa-save me-1"></span>Save Hall
+                </button>
+                <a asp-controller="Cinema" asp-action="GetById" asp-route-id="@Model.CinemaId" class="btn btn-falcon-default">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Cinema
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

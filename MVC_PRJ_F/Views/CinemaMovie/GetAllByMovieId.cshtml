@@ -1,0 +1,144 @@
+@model IEnumerable<CinemaMovies>
+
+@{
+    ViewData["Title"] = "Movie Showtimes";
+    var movie = Model.FirstOrDefault()?.Movie;
+}
+
+<div class="container py-4">
+    <!-- Movie Header -->
+    @if (movie != null)
+    {
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        @if (!string.IsNullOrEmpty(movie.MainImage))
+                        {
+                            <img src="~/images/MovieImage/@movie.MainImage" 
+                                 alt="@movie.Title" 
+                                 class="rounded"
+                                 style="width: 120px; height: 180px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="bg-light rounded d-flex align-items-center justify-content-center" 
+                                 style="width: 120px; height: 180px;">
+                                <i class="fas fa-film fa-3x text-muted"></i>
+                            </div>
+                        }
+                    </div>
+                    <div class="col">
+                        <h2 class="mb-2">
+                            <i class="fas fa-film me-2 text-primary"></i>@movie.Title
+                        </h2>
+                        @if (movie.Status)
+                        {
+                            <span class="badge bg-success mb-2">
+                                <i class="fas fa-play-circle me-1"></i>Now Showing
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning mb-2">
+                                <i class="fas fa-clock me-1"></i>Coming Soon
+                            </span>
+                        }
+                        <p class="text-muted mb-0">
+                            <i class="fas fa-clock me-1"></i>Duration: @movie.Time hours
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Showtimes Section -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 py-3">
+            <h5 class="mb-0">
+                <i class="fas fa-calendar-alt me-2 text-primary"></i>Available Showtimes
+            </h5>
+        </div>
+        <div class="card-body">
+            @if (Model != null && Model.Any())
+            {
+                <div class="row g-3">
+                    @foreach (var show in Model)
+                    {
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border hover-lift">
+                                <div class="card-body">
+                                    <!-- Cinema Info -->
+                                    <h6 class="card-title mb-3">
+                                        <i class="fas fa-building me-2 text-primary"></i>
+                                        @if (show.Cinema != null)
+                                        {
+                                            <a href="@Url.Action("GetById", "Cinema", new { id = show.CinemaId })" 
+                                               class="text-decoration-none">
+                                                @show.Cinema.Name
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span>Cinema #@show.CinemaId</span>
+                                        }
+                                    </h6>
+
+                                    <!-- Hall Info -->
+                                    <p class="mb-2">
+                                        <i class="fas fa-door-open me-2 text-muted"></i>
+                                        <strong>Hall:</strong> @(show.Hall?.Name ?? "Hall #" + show.HallId)
+                                    </p>
+
+                                    <!-- Showtime -->
+                                    <p class="mb-2">
+                                        <i class="fas fa-clock me-2 text-muted"></i>
+                                        <strong>Time:</strong> @show.Time.ToString("hh:mm tt")
+                                    </p>
+
+                                    <!-- Price -->
+                                    <p class="mb-3">
+                                        <i class="fas fa-tag me-2 text-muted"></i>
+                                        <strong>Price:</strong> <span class="text-primary fw-bold">@show.Price EGP</span>
+                                    </p>
+
+                                    <!-- Book Button -->
+                                    <div class="d-grid">
+                                        <a href="#" class="btn btn-primary">
+                                            <i class="fas fa-ticket-alt me-1"></i>Book Now
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>No showtimes available for this movie at the moment.
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="mt-4">
+        <a href="@Url.Action("Index", "Movie")" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Back to Movies
+        </a>
+    </div>
+</div>
+
+<style>
+    .hover-lift {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+</style>
