@@ -64,31 +64,84 @@ public class CinemaController:Controller
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> Create(Cinema cinema,IFormFile Imag)
+    public async Task<IActionResult> Create(Cinema cinema, IFormFile Imag)
     {
-        if (!ModelState.IsValid)
+        try
         {
-            return View(cinema);
-        }
-
-        if ( Imag.Length > 0)
-        {
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(Imag.FileName) ;
-            
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), CinemaImagesPath, fileName);
-
-                
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            // 1. التحقق من ModelState
+            if (!ModelState.IsValid)
             {
-                Imag.CopyTo(stream);
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                
+                TempData["Error"] = "Validation failed: " + string.Join(", ", errors);
+                return View(cinema);
             }
 
-            cinema.Image = fileName;
-        }
-        await _cinemaRepository.CreatAsync(cinema);
-        TempData["Success"] = "Cinema has been added successfully.";
+            // 2. معالجة الصورة (اختيارية)
+            if (Imag != null && Imag.Length > 0)
+            {
+                try
+                {
+                    // التحقق من نوع الملف
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                    var extension = Path.GetExtension(Imag.FileName).ToLower();
+                    
+                    if (!allowedExtensions.Contains(extension))
+                    {
+                        TempData["Error"] = "Only image files (jpg, jpeg, png, gif) are allowed";
+                        return View(cinema);
+                    }
 
-        return RedirectToAction(nameof(GetById), new { id = cinema.Id });
+                    // التحقق من حجم الملف (5MB)
+                    if (Imag.Length > 5 * 1024 * 1024)
+                    {
+                        TempData["Error"] = "Image size must be less than 5MB";
+                        return View(cinema);
+                    }
+
+                    var fileName = Guid.NewGuid().ToString() + extension;
+                    var filePath = Path.Combine(CinemaImagesPath, fileName);
+
+                    // التأكد من وجود المجلد
+                    if (!Directory.Exists(CinemaImagesPath))
+                    {
+                        Directory.CreateDirectory(CinemaImagesPath);
+                    }
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await Imag.CopyToAsync(stream);
+                    }
+
+                    cinema.Image = fileName;
+                }
+                catch (Exception ex)
+                {
+                    TempData["Error"] = $"Failed to upload image: {ex.Message}";
+                    return View(cinema);
+                }
+            }
+            else
+            {
+                // إذا لم يتم رفع صورة، استخدم صورة افتراضية أو اتركها فاضية
+                cinema.Image = "default-cinema.png"; // أو اتركها null حسب الـ model
+            }
+
+            // 3. حفظ السينما في قاعدة البيانات
+            await _cinemaRepository.CreatAsync(cinema);
+            TempData["Success"] = "Cinema has been added successfully.";
+
+            return RedirectToAction(nameof(GetById), new { id = cinema.Id });
+        }
+        catch (Exception ex)
+        {
+            // التقاط أي خطأ آخر
+            TempData["Error"] = $"Failed to create cinema: {ex.Message}. Inner: {ex.InnerException?.Message}";
+            return View(cinema);
+        }
     }
 
     [HttpPost]

@@ -4,68 +4,85 @@
 
 @model List<Cinema>
 
-<div class="card mb-3">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">
-            <span class="fas fa-building me-2"></span>All Cinemas
+<div class="card card-enhanced border-0 mb-4 fade-in">
+    <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center py-3">
+        <h5 class="mb-0 fw-bold">
+            <i class="fas fa-building me-2 text-primary"></i>All Cinemas
         </h5>
         @if (User.Identity.IsAuthenticated)
         {
-            <a class="btn btn-sm btn-primary" asp-action="Create">
-                <span class="fas fa-plus me-1"></span>Add New Cinema
+            <a class="btn btn-primary btn-cinema" asp-action="Create">
+                <i class="fas fa-plus me-2"></i>Add New Cinema
             </a>
         }
     </div>
     <div class="card-body">
         @if (Model != null && Model.Any())
         {
-            <div class="row g-3">
+            <div class="row g-4">
                 @foreach (var cinema in Model)
                 {
                     <div class="col-lg-4 col-md-6">
-                        <div class="card h-100">
-                            <div class="card-body">
+                        <div class="card card-enhanced h-100 border-0 shadow-sm hover-lift">
+                            <div class="card-body p-4">
                                 <div class="d-flex align-items-start mb-3">
                                     <div class="avatar avatar-3xl me-3">
                                         @if (!string.IsNullOrEmpty(cinema.Image))
                                         {
-                                            <img class="rounded" src="~/images/CinemaImage/@cinema.Image" alt="@cinema.Name" />
+                                            <img class="rounded-cinema" src="~/images/CinemaImage/@cinema.Image" 
+                                                 alt="@cinema.Name" style="width: 60px; height: 60px; object-fit: cover;" />
                                         }
                                         else
                                         {
-                                            <img class="rounded" src="~/assets/img/icons/cinema-icon.png" alt="@cinema.Name" />
+                                            <div class="rounded-cinema bg-soft-primary d-flex align-items-center justify-content-center" 
+                                                 style="width: 60px; height: 60px;">
+                                                <i class="fas fa-building fa-2x text-primary"></i>
+                                            </div>
                                         }
                                     </div>
                                     <div class="flex-grow-1">
-                                        <h6 class="mb-1">@cinema.Name</h6>
-                                        <p class="fs-11 text-600 mb-2">
-                                            <span class="fas fa-map-marker-alt me-1"></span>@cinema.City, @cinema.Country
+                                        <h6 class="mb-1 fw-bold">@cinema.Name</h6>
+                                        <p class="small text-muted mb-2">
+                                            <i class="fas fa-map-marker-alt me-1 text-danger"></i>@cinema.City, @cinema.Country
                                         </p>
                                         @if (cinema.Halls != null && cinema.Halls.Any())
                                         {
-                                            <span class="badge bg-soft-success text-success">@cinema.Halls.Count Halls</span>
+                                            <span class="badge bg-soft-success text-success">
+                                                <i class="fas fa-door-open me-1"></i>@cinema.Halls.Count Halls
+                                            </span>
                                         }
                                     </div>
                                 </div>
-                                <p class="text-600 fs-11 mb-2">
-                                    <span class="fas fa-phone me-1"></span>@cinema.Phone
-                                </p>
-                                <p class="text-600 fs-11 mb-2">
-                                    <span class="fas fa-envelope me-1"></span>@cinema.Email
-                                </p>
-                                <p class="text-600 fs-11 mb-3">@cinema.Address</p>
-                                <div class="d-flex gap-2">
-                                    <a class="btn btn-sm btn-primary flex-fill" asp-action="GetById" asp-route-id="@cinema.Id">
-                                        <span class="fas fa-eye me-1"></span>View Details
+                                
+                                <div class="mb-3">
+                                    <div class="d-flex align-items-center mb-2 text-muted small">
+                                        <i class="fas fa-phone text-primary me-2"></i>
+                                        <span>@cinema.Phone</span>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-2 text-muted small">
+                                        <i class="fas fa-envelope text-primary me-2"></i>
+                                        <span>@cinema.Email</span>
+                                    </div>
+                                    <div class="d-flex align-items-start text-muted small">
+                                        <i class="fas fa-map-pin text-primary me-2 mt-1"></i>
+                                        <span>@cinema.Address</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex gap-2 mt-3">
+                                    <a class="btn btn-primary btn-cinema flex-fill" asp-action="GetById" asp-route-id="@cinema.Id">
+                                        <i class="fas fa-eye me-1"></i>View Details
                                     </a>
                                     @if (User.Identity.IsAuthenticated)
                                     {
-                                        <a class="btn btn-sm btn-falcon-default" asp-action="Edit" asp-route-id="@cinema.Id">
-                                            <span class="fas fa-edit"></span>
+                                        <a class="btn btn-outline-secondary hover-lift" asp-action="Edit" asp-route-id="@cinema.Id" 
+                                           title="Edit Cinema">
+                                            <i class="fas fa-edit"></i>
                                         </a>
-                                        <form asp-action="Delete" asp-route-id="@cinema.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this cinema?');">
-                                            <button type="submit" class="btn btn-sm btn-falcon-danger">
-                                                <span class="fas fa-trash"></span>
+                                        <form asp-action="Delete" asp-route-id="@cinema.Id" method="post" class="d-inline" 
+                                              data-confirm="Are you sure you want to delete this cinema?">
+                                            <button type="submit" class="btn btn-outline-danger hover-lift" title="Delete Cinema">
+                                                <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
                                     }
@@ -78,10 +95,10 @@
         }
         else
         {
-            <div class="alert alert-info text-center">
-                <p class="mb-0">No cinemas found. @if (User.Identity.IsAuthenticated) { <a asp-action="Create">Add a cinema</a> }</p>
+            <div class="alert alert-info alert-enhanced text-center border-0">
+                <i class="fas fa-info-circle me-2"></i>
+                <span>No cinemas found. @if (User.Identity.IsAuthenticated) { <a asp-action="Create" class="alert-link">Add a cinema</a> }</span>
             </div>
         }
     </div>
 </div>
-

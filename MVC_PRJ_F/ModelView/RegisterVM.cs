@@ -8,18 +8,6 @@ public class RegisterVM
     [Required(ErrorMessage = "Name is required")]
     public string Name { get; set; }
     
-    [Required(ErrorMessage = "Country is required")]
-    public string Country { get; set; }  // غيرتها من List إلى string
-    
-    [Required(ErrorMessage = "City is required")]
-    public string City { get; set; }  // غيرتها من List إلى string
-    
-    // للـ dropdown options في الـ View
-    public List<string> CountryList { get; set; } = new();
-    public List<string> CityList { get; set; } = new();
-    
-    
-
     [Required(ErrorMessage = "Email is required")]
     [EmailAddress(ErrorMessage = "Invalid email format")]
     public string Email { get; set; }

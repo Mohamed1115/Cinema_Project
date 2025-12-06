@@ -39,8 +39,8 @@ namespace MVC_PRJ_F.Controllers
             var mov = await _movieRepository.GetMovieWithImage(id);
             if (mov == null)
                 return NotFound();
-            //
-            return View();
+            
+            return View(mov);
         }
 
         [HttpGet]
@@ -53,50 +53,91 @@ namespace MVC_PRJ_F.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Movie movie, IFormFile Imag, List<IFormFile> SubImages)
         {
-            if (!ModelState.IsValid)
-                return View(movie);
-
-            // 1️⃣ رفع الصورة الأساسية MainImage
-            if (Imag != null && Imag.Length > 0)
+            try
             {
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(Imag.FileName);
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), MovieImagesPath, fileName);
-
-                using var stream = new FileStream(filePath, FileMode.Create);
-                await Imag.CopyToAsync(stream);
-
-                movie.MainImage = fileName;
-            }
-
-            // 2️⃣ حفظ الفيلم
-            await _movieRepository.CreatAsync(movie);
-
-            // 3️⃣ رفع الصور الفرعية (SubImages)
-            if (SubImages != null && SubImages.Count > 0)
-            {
-                foreach (var img in SubImages)
+                if (!ModelState.IsValid)
                 {
-                    if (img.Length > 0)
+                    // جمع كل الأخطاء من ModelState
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                    
+                    TempData["Error"] = string.Join("<br>", errors);
+                    return View(movie);
+                }
+
+                // التحقق من الصورة الأساسية
+                if (Imag != null && Imag.Length > 0)
+                {
+                    // التحقق من نوع الملف
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                    var extension = Path.GetExtension(Imag.FileName).ToLowerInvariant();
+                    
+                    if (!allowedExtensions.Contains(extension))
                     {
-                        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName);
-                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), MovieImagesPath, fileName);
+                        TempData["Error"] = "Invalid image format. Only JPG, JPEG, PNG, and GIF are allowed.";
+                        return View(movie);
+                    }
 
-                        using var stream = new FileStream(filePath, FileMode.Create);
-                        await img.CopyToAsync(stream);
+                    // التحقق من حجم الملف (5MB max)
+                    if (Imag.Length > 5 * 1024 * 1024)
+                    {
+                        TempData["Error"] = "Image size must be less than 5MB.";
+                        return View(movie);
+                    }
 
-                        var subImage = new MovImage()
+                    // إنشاء المجلد إذا لم يكن موجوداً
+                    if (!Directory.Exists(MovieImagesPath))
+                    {
+                        Directory.CreateDirectory(MovieImagesPath);
+                    }
+
+                    var fileName = Guid.NewGuid().ToString() + extension;
+                    var filePath = Path.Combine(MovieImagesPath, fileName);
+
+                    using var stream = new FileStream(filePath, FileMode.Create);
+                    await Imag.CopyToAsync(stream);
+
+                    movie.MainImage = fileName;
+                }
+
+                // حفظ الفيلم
+                await _movieRepository.CreatAsync(movie);
+
+                // رفع الصور الفرعية (SubImages)
+                if (SubImages != null && SubImages.Count > 0)
+                {
+                    foreach (var img in SubImages)
+                    {
+                        if (img.Length > 0)
                         {
-                            MovieId = movie.Id,
-                            ImageName = fileName
-                        };
+                            var extension = Path.GetExtension(img.FileName).ToLowerInvariant();
+                            var fileName = Guid.NewGuid().ToString() + extension;
+                            var filePath = Path.Combine(MovieImagesPath, fileName);
 
-                        await _subImageRepository.CreateAsync(subImage);
+                            using var stream = new FileStream(filePath, FileMode.Create);
+                            await img.CopyToAsync(stream);
+
+                            var subImage = new MovImage()
+                            {
+                                MovieId = movie.Id,
+                                ImageName = fileName
+                            };
+
+                            await _subImageRepository.CreateAsync(subImage);
+                        }
                     }
                 }
-            }
 
-            TempData["Success"] = "Movie has been added successfully.";
-            return RedirectToAction(nameof(GetById), new { id = movie.Id });
+                TempData["Success"] = "Movie has been added successfully.";
+                return RedirectToAction(nameof(GetById), new { id = movie.Id });
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"An error occurred while creating the movie: {ex.Message}";
+                return View(movie);
+            }
         }
 
 
@@ -178,7 +219,7 @@ namespace MVC_PRJ_F.Controllers
 
             movie.Description= mov.Description;
             movie.Title = mov.Title;
-            movie.DateTime=mov.DateTime;
+            movie.Time=mov.Time;
             // movie.DateOfBirth = mov.DateOfBirth;
             // movie.Gender = mov.Gender;
 

@@ -4,49 +4,67 @@
 
 <!-- Hero Section with Featured Movie -->
 <section class="pb-0">
-    <div class="card bg-dark text-white overflow-hidden" style="min-height: 400px;">
+    <div class="card bg-dark text-white overflow-hidden hero-section" style="min-height: 500px; border-radius: 0;">
         @if (ViewBag.FeaturedMovie != null)
         {
             var featuredMovie = (MVC_PRJ_F.Models.Movie)ViewBag.FeaturedMovie;
             @if (!string.IsNullOrEmpty(featuredMovie.MainImage))
             {
-                <img class="card-img" src="~/images/MovieImage/@featuredMovie.MainImage" alt="@featuredMovie.Title" style="height: 400px; object-fit: cover; opacity: 0.5;" />
+                <img class="card-img position-absolute w-100 h-100" src="~/images/MovieImage/@featuredMovie.MainImage" 
+                     alt="@featuredMovie.Title" style="object-fit: cover; opacity: 0.4; filter: blur(2px);" />
             }
             else
             {
-                <img class="card-img" src="~/assets/img/generic/cinema-hero.jpg" alt="Featured Movie" style="height: 400px; object-fit: cover; opacity: 0.5;" />
+                <img class="card-img position-absolute w-100 h-100" src="~/assets/img/generic/cinema-hero.jpg" 
+                     alt="Featured Movie" style="object-fit: cover; opacity: 0.4; filter: blur(2px);" />
             }
-            <div class="card-img-overlay d-flex align-items-center">
-                <div>
-                    <h5 class="fs-3 fs-md-4 text-white">Now Showing</h5>
-                    <h1 class="display-3 fw-bold text-white mb-3">@featuredMovie.Title</h1>
-                    <p class="lead text-white mb-4">@(featuredMovie.Description?.Length > 100 ? featuredMovie.Description.Substring(0, 100) + "..." : featuredMovie.Description)</p>
-                    <div>
-                        <a class="btn btn-lg btn-primary me-2" asp-controller="Movie" asp-action="GetById" asp-route-id="@featuredMovie.Id">
-                            <span class="fas fa-ticket-alt me-2"></span>Book Now
-                        </a>
-                        <a class="btn btn-lg btn-outline-light" href="#movies">
-                            <span class="fas fa-film me-2"></span>View All Movies
-                        </a>
+            <div class="hero-overlay"></div>
+            <div class="card-img-overlay d-flex align-items-center position-relative" style="z-index: 10;">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-8 hero-content">
+                            <span class="badge badge-cinema bg-danger mb-3 pulse">
+                                <i class="fas fa-fire me-1"></i> NOW SHOWING
+                            </span>
+                            <h1 class="display-2 fw-bold text-white mb-3 text-shadow">@featuredMovie.Title</h1>
+                            <p class="lead text-white mb-4 fs-4" style="max-width: 600px;">
+                                @(featuredMovie.Description?.Length > 150 ? featuredMovie.Description.Substring(0, 150) + "..." : featuredMovie.Description)
+                            </p>
+                            <div class="d-flex gap-3 flex-wrap">
+                                <a class="btn btn-lg btn-primary btn-cinema hover-lift" 
+                                   asp-controller="Movie" asp-action="GetById" asp-route-id="@featuredMovie.Id">
+                                    <i class="fas fa-ticket-alt me-2"></i>Book Now
+                                </a>
+                                <a class="btn btn-lg btn-outline-light btn-cinema hover-lift" href="#movies">
+                                    <i class="fas fa-film me-2"></i>View All Movies
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         }
         else
         {
-            <img class="card-img" src="~/assets/img/generic/cinema-hero.jpg" alt="Featured Movie" style="height: 400px; object-fit: cover; opacity: 0.5;" />
-            <div class="card-img-overlay d-flex align-items-center">
-                <div>
-                    <h5 class="fs-3 fs-md-4 text-white">Welcome to Cinema</h5>
-                    <h1 class="display-3 fw-bold text-white mb-3">Experience Cinema Like Never Before</h1>
-                    <p class="lead text-white mb-4">Book your tickets now and enjoy the latest blockbusters!</p>
-                    <div>
-                        <a class="btn btn-lg btn-primary me-2" href="#movies">
-                            <span class="fas fa-ticket-alt me-2"></span>Book Now
-                        </a>
-                        <a class="btn btn-lg btn-outline-light" asp-controller="Movie" asp-action="Index">
-                            <span class="fas fa-film me-2"></span>View All Movies
-                        </a>
+            <img class="card-img position-absolute w-100 h-100" src="~/assets/img/generic/cinema-hero.jpg" 
+                 alt="Cinema" style="object-fit: cover; opacity: 0.4; filter: blur(2px);" />
+            <div class="hero-overlay"></div>
+            <div class="card-img-overlay d-flex align-items-center position-relative" style="z-index: 10;">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-8 hero-content">
+                            <h5 class="fs-3 text-white mb-3">Welcome to Cinema</h5>
+                            <h1 class="display-2 fw-bold text-white mb-3 text-shadow">Experience Cinema Like Never Before</h1>
+                            <p class="lead text-white mb-4 fs-4">Book your tickets now and enjoy the latest blockbusters!</p>
+                            <div class="d-flex gap-3 flex-wrap">
+                                <a class="btn btn-lg btn-primary btn-cinema hover-lift" href="#movies">
+                                    <i class="fas fa-ticket-alt me-2"></i>Book Now
+                                </a>
+                                <a class="btn btn-lg btn-outline-light btn-cinema hover-lift" asp-controller="Movie" asp-action="Index">
+                                    <i class="fas fa-film me-2"></i>View All Movies
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -58,68 +76,60 @@
 <section class="py-4">
     <div class="row g-3">
         <div class="col-md-3 col-sm-6">
-            <div class="card h-100 bg-gradient-primary text-white">
+            <div class="card h-100 stat-card bg-gradient-primary text-white border-0 hover-lift">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-white mb-1">Total Movies</h6>
-                            <h2 class="mb-0 text-white">@ViewBag.TotalMovies</h2>
+                            <h6 class="text-white mb-2 text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px;">Total Movies</h6>
+                            <h2 class="mb-0 text-white stat-number" data-counter="@ViewBag.TotalMovies">0</h2>
                         </div>
-                        <div class="fs-4">
-                            <svg class="svg-inline--fa fa-film fa-w-16" style="color: white;" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="film" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                <path fill="currentColor" d="M488 64h-8v20c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12V64H96v20c0 6.6-5.4 12-12 12H44c-6.6 0-12-5.4-12-12V64h-8C10.7 64 0 74.7 0 88v336c0 13.3 10.7 24 24 24h8v-20c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v20h320v-20c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v20h8c13.3 0 24-10.7 24-24V88c0-13.3-10.7-24-24-24zM96 372c0 6.6-5.4 12-12 12H44c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40zm0-96c0 6.6-5.4 12-12 12H44c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40zm0-96c0 6.6-5.4 12-12 12H44c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40zm272 208c0 6.6-5.4 12-12 12H156c-6.6 0-12-5.4-12-12v-96c0-6.6 5.4-12 12-12h200c6.6 0 12 5.4 12 12v96zm0-168c0 6.6-5.4 12-12 12H156c-6.6 0-12-5.4-12-12v-96c0-6.6 5.4-12 12-12h200c6.6 0 12 5.4 12 12v96zm112 152c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40zm0-96c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40zm0-96c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40z"></path>
-                            </svg>
+                        <div class="fs-1 opacity-75">
+                            <i class="fas fa-film"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-md-3 col-sm-6">
-            <div class="card h-100 bg-gradient-success text-white">
+            <div class="card h-100 stat-card bg-gradient-success text-white border-0 hover-lift">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-white mb-1">Active Cinemas</h6>
-                            <h2 class="mb-0 text-white">@ViewBag.ActiveCinemas</h2>
+                            <h6 class="text-white mb-2 text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px;">Active Cinemas</h6>
+                            <h2 class="mb-0 text-white stat-number" data-counter="@ViewBag.ActiveCinemas">0</h2>
                         </div>
-                        <div class="fs-4">
-                            <svg class="svg-inline--fa fa-building fa-w-14" style="color: white;" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="building" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                                <path fill="currentColor" d="M436 480h-20V24c0-13.255-10.745-24-24-24H56C42.745 0 32 10.745 32 24v456H12c-6.627 0-12 5.373-12 12v20h448v-20c0-6.627-5.373-12-12-12zM128 76c0-6.627 5.373-12 12-12h40c6.627 0 12 5.373 12 12v40c0 6.627-5.373 12-12 12h-40c-6.627 0-12-5.373-12-12V76zm0 96c0-6.627 5.373-12 12-12h40c6.627 0 12 5.373 12 12v40c0 6.627-5.373 12-12 12h-40c-6.627 0-12-5.373-12-12v-40zm52 148h-40c-6.627 0-12-5.373-12-12v-40c0-6.627 5.373-12 12-12h40c6.627 0 12 5.373 12 12v40c0 6.627-5.373 12-12 12zm76 160h-64v-84c0-6.627 5.373-12 12-12h40c6.627 0 12 5.373 12 12v84zm64-172c0 6.627-5.373 12-12 12h-40c-6.627 0-12-5.373-12-12v-40c0-6.627 5.373-12 12-12h40c6.627 0 12 5.373 12 12v40zm0-96c0 6.627-5.373 12-12 12h-40c-6.627 0-12-5.373-12-12v-40c0-6.627 5.373-12 12-12h40c6.627 0 12 5.373 12 12v40zm0-96c0 6.627-5.373 12-12 12h-40c-6.627 0-12-5.373-12-12V76c0-6.627 5.373-12 12-12h40c6.627 0 12 5.373 12 12v40z"></path>
-                            </svg>
+                        <div class="fs-1 opacity-75">
+                            <i class="fas fa-building"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-md-3 col-sm-6">
-            <div class="card h-100 bg-gradient-warning text-white">
+            <div class="card h-100 stat-card bg-gradient-warning text-white border-0 hover-lift">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-white mb-1">Today's Shows</h6>
-                            <h2 class="mb-0 text-white">@ViewBag.TodayShows</h2>
+                            <h6 class="text-white mb-2 text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px;">Today's Shows</h6>
+                            <h2 class="mb-0 text-white stat-number" data-counter="@ViewBag.TodayShows">0</h2>
                         </div>
-                        <div class="fs-4">
-                            <svg class="svg-inline--fa fa-calendar-day fa-w-14" style="color: white;" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="calendar-day" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                                <path fill="currentColor" d="M0 464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V192H0v272zm64-192c0-8.8 7.2-16 16-16h96c8.8 0 16 7.2 16 16v96c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16v-96zM400 64h-48V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H160V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H48C21.5 64 0 85.5 0 112v48h448v-48c0-26.5-21.5-48-48-48z"></path>
-                            </svg>
+                        <div class="fs-1 opacity-75">
+                            <i class="fas fa-calendar-day"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-md-3 col-sm-6">
-            <div class="card h-100 bg-gradient-info text-white">
+            <div class="card h-100 stat-card bg-gradient-info text-white border-0 hover-lift">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-white mb-1">Tickets Sold</h6>
-                            <h2 class="mb-0 text-white">@ViewBag.TicketsSold</h2>
+                            <h6 class="text-white mb-2 text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px;">Tickets Sold</h6>
+                            <h2 class="mb-0 text-white stat-number" data-counter="@ViewBag.TicketsSold">0</h2>
                         </div>
-                        <div class="fs-4">
-                            <svg class="svg-inline--fa fa-ticket-alt fa-w-18" style="color: white;" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="ticket-alt" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
-                                <path fill="currentColor" d="M128 160h320v192H128V160zm400 96c0 26.51 21.49 48 48 48v96c0 26.51-21.49 48-48 48H48c-26.51 0-48-21.49-48-48v-96c26.51 0 48-21.49 48-48s-21.49-48-48-48v-96c0-26.51 21.49-48 48-48h480c26.51 0 48 21.49 48 48v96c-26.51 0-48 21.49-48 48zm-48-104c0-13.255-10.745-24-24-24H120c-13.255 0-24 10.745-24 24v208c0 13.255 10.745 24 24 24h336c13.255 0 24-10.745 24-24V152z"></path>
-                            </svg>
+                        <div class="fs-1 opacity-75">
+                            <i class="fas fa-ticket-alt"></i>
                         </div>
                     </div>
                 </div>
@@ -129,48 +139,65 @@
 </section>
 
 <!-- Now Showing Movies -->
-<section class="py-4" id="movies">
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">
-                <span class="fas fa-fire text-danger me-2"></span>Now Showing
+<section class="py-4 fade-in" id="movies">
+    <div class="card card-enhanced border-0">
+        <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center py-3">
+            <h5 class="mb-0 fw-bold">
+                <i class="fas fa-fire text-danger me-2"></i>Now Showing
             </h5>
-            <a class="btn btn-sm btn-falcon-default" asp-controller="Movie" asp-action="Index">
-                View All <span class="fas fa-arrow-right ms-1"></span>
+            <a class="btn btn-sm btn-primary btn-cinema" asp-controller="Movie" asp-action="Index">
+                View All <i class="fas fa-arrow-right ms-1"></i>
             </a>
         </div>
         <div class="card-body">
-            <div class="row g-3">
+            <div class="row g-4">
                 @if (ViewBag.FeaturedMovies != null && ((List<MVC_PRJ_F.Models.Movie>)ViewBag.FeaturedMovies).Any())
                 {
                     @foreach (var movie in (List<MVC_PRJ_F.Models.Movie>)ViewBag.FeaturedMovies)
                     {
                         <div class="col-lg-3 col-md-4 col-sm-6">
-                            <div class="card h-100 overflow-hidden">
-                                <div class="position-relative">
+                            <div class="card card-movie h-100 border-0 shadow-sm">
+                                <div class="position-relative overflow-hidden">
                                     @if (!string.IsNullOrEmpty(movie.MainImage))
                                     {
-                                        <img class="card-img-top" src="~/images/MovieImage/@movie.MainImage" alt="@movie.Title" style="height: 350px; object-fit: cover;" />
+                                        <img class="card-img-top" src="~/images/MovieImage/@movie.MainImage" 
+                                             alt="@movie.Title" style="height: 350px; object-fit: cover;" />
                                     }
                                     else
                                     {
-                                        <img class="card-img-top" src="~/assets/img/generic/movie-1.jpg" alt="@movie.Title" style="height: 350px; object-fit: cover;" />
+                                        <img class="card-img-top" src="~/assets/img/generic/movie-1.jpg" 
+                                             alt="@movie.Title" style="height: 350px; object-fit: cover;" />
                                     }
-                                    <span class="badge bg-danger position-absolute top-0 end-0 m-2">NOW</span>
+                                    <span class="badge bg-danger position-absolute top-0 end-0 m-3 badge-pulse">
+                                        <i class="fas fa-play me-1"></i>NOW
+                                    </span>
+                                    <div class="movie-overlay">
+                                        <div class="text-white">
+                                            <h6 class="text-white mb-2">@movie.Title</h6>
+                                            <p class="small mb-0">Click to view details</p>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="card-body">
-                                    <h6 class="mb-2">@movie.Title</h6>
-                                    <div class="d-flex align-items-center mb-2">
-                                        <span class="fas fa-star text-warning me-1"></span>
-                                        <span class="fw-semi-bold">@movie.DateTime.ToString("MMM dd")</span>
-                                        @if (movie.Categories != null && movie.Categories.Any())
-                                        {
-                                            <span class="text-600 ms-2">@string.Join(", ", movie.Categories.Where(mc => mc.Category != null).Select(mc => mc.Category.Name).Distinct())</span>
-                                        }
+                                    <h6 class="mb-2 fw-bold">@movie.Title</h6>
+                                    <div class="d-flex align-items-center mb-2 text-muted small">
+                                        <i class="fas fa-calendar text-primary me-2"></i>
+                                        <span class="fw-semibold">@movie.Time.ToString("MMM dd, yyyy")</span>
                                     </div>
-                                    <p class="fs-11 text-600 mb-3">@(movie.Description?.Length > 50 ? movie.Description.Substring(0, 50) + "..." : movie.Description)</p>
-                                    <a class="btn btn-sm btn-primary w-100" asp-controller="Movie" asp-action="GetById" asp-route-id="@movie.Id">
-                                        <span class="fas fa-ticket-alt me-1"></span>Book Tickets
+                                    @if (movie.Categories != null && movie.Categories.Any())
+                                    {
+                                        <div class="mb-3">
+                                            @foreach (var cat in movie.Categories.Where(mc => mc.Category != null).Take(2))
+                                            {
+                                                <span class="badge bg-soft-primary text-primary me-1">@cat.Category.Name</span>
+                                            }
+                                        </div>
+                                    }
+                                    <p class="text-muted small mb-3" style="min-height: 40px;">
+                                        @(movie.Description?.Length > 60 ? movie.Description.Substring(0, 60) + "..." : movie.Description)
+                                    </p>
+                                    <a class="btn btn-primary btn-cinema w-100" asp-controller="Movie" asp-action="GetById" asp-route-id="@movie.Id">
+                                        <i class="fas fa-ticket-alt me-2"></i>Book Tickets
                                     </a>
                                 </div>
                             </div>
@@ -180,8 +207,9 @@
                 else
                 {
                     <div class="col-12">
-                        <div class="alert alert-info text-center">
-                            <p class="mb-0">No movies available at the moment. Check back later!</p>
+                        <div class="alert alert-info alert-enhanced text-center border-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <span>No movies available at the moment. Check back later!</span>
                         </div>
                     </div>
                 }
@@ -222,7 +250,7 @@
                                     </div>
                                     <div class="col-8">
                                         <div class="card-body">
-                                            <span class="badge bg-primary mb-2">Releasing @movie.DateTime.ToString("MMM dd, yyyy")</span>
+                                            <span class="badge bg-primary mb-2">Releasing @movie.Time.ToString()</span>
                                             <h5 class="card-title">@movie.Title</h5>
                                             <p class="card-text text-600 fs-11">@(movie.Description?.Length > 80 ? movie.Description.Substring(0, 80) + "..." : movie.Description)</p>
                                             @if (movie.Categories != null && movie.Categories.Any())
@@ -325,33 +353,43 @@
 </section>
 
 <!-- Special Offers -->
-<section class="py-4">
-    <div class="row g-3">
+<section class="py-4 fade-in">
+    <div class="row g-4">
         <div class="col-md-6">
-            <div class="card bg-gradient-primary text-white h-100">
-                <div class="card-body">
-                    <h4 class="text-white mb-3">
-                        <span class="fas fa-gift me-2"></span>Weekend Special
-                    </h4>
-                    <h2 class="text-white mb-2">50% OFF</h2>
-                    <p class="text-white mb-3">Book any movie tickets for weekend shows and get 50% discount!</p>
-                    <button class="btn btn-light">
-                        <span class="fas fa-tag me-2"></span>Claim Offer
-                    </button>
+            <div class="card h-100 border-0 overflow-hidden hover-lift" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body p-4 text-white position-relative">
+                    <div class="position-absolute top-0 end-0 opacity-25" style="font-size: 120px;">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <div class="position-relative">
+                        <h4 class="text-white mb-3 fw-bold">
+                            <i class="fas fa-gift me-2"></i>Weekend Special
+                        </h4>
+                        <h2 class="display-4 text-white mb-3 fw-bold">50% OFF</h2>
+                        <p class="text-white mb-4 fs-5">Book any movie tickets for weekend shows and get 50% discount!</p>
+                        <button class="btn btn-light btn-cinema hover-scale">
+                            <i class="fas fa-tag me-2"></i>Claim Offer
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card bg-gradient-warning text-white h-100">
-                <div class="card-body">
-                    <h4 class="text-white mb-3">
-                        <span class="fas fa-users me-2"></span>Group Booking
-                    </h4>
-                    <h2 class="text-white mb-2">Buy 4 Get 1 Free</h2>
-                    <p class="text-white mb-3">Perfect for friends and family! Book 4 tickets and get 1 absolutely free.</p>
-                    <button class="btn btn-light">
-                        <span class="fas fa-ticket-alt me-2"></span>Book Now
-                    </button>
+            <div class="card h-100 border-0 overflow-hidden hover-lift" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <div class="card-body p-4 text-white position-relative">
+                    <div class="position-absolute top-0 end-0 opacity-25" style="font-size: 120px;">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="position-relative">
+                        <h4 class="text-white mb-3 fw-bold">
+                            <i class="fas fa-users me-2"></i>Group Booking
+                        </h4>
+                        <h2 class="display-4 text-white mb-3 fw-bold">Buy 4 Get 1 Free</h2>
+                        <p class="text-white mb-4 fs-5">Perfect for friends and family! Book 4 tickets and get 1 absolutely free.</p>
+                        <button class="btn btn-light btn-cinema hover-scale">
+                            <i class="fas fa-ticket-alt me-2"></i>Book Now
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

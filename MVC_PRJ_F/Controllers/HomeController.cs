@@ -31,14 +31,14 @@ public class HomeController : Controller
         var allMovies = await _movieRepository.GetAllAsync();
         var featuredMovies = allMovies
             .Where(m => m.Status)
-            .OrderByDescending(m => m.DateTime)
+            .OrderByDescending(m => m.Time)
             .Take(4)
             .ToList();
 
-        // Get coming soon movies (future dates or not active)
+        // Get coming soon movies (not active)
         var comingSoonMovies = allMovies
-            .Where(m => !m.Status || m.DateTime > DateTime.Now)
-            .OrderBy(m => m.DateTime)
+            .Where(m => !m.Status)
+            .OrderBy(m => m.Time)
             .Take(2)
             .ToList();
 

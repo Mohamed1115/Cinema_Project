@@ -13,58 +13,6 @@ namespace MVC_PRJ_F.Controllers;
 
 public class AccountController:Controller
 {
-    // public static Dictionary<string, List<string>> CountriesWithCities =
-    //     new Dictionary<string, List<string>>()
-    //     {
-    //         { "Egypt", new List<string>
-    //             {
-    //                 "Cairo",
-    //                 "Alexandria",
-    //                 "Giza",
-    //                 "Aswan",
-    //                 "Asyut",
-    //                 "Beheira",
-    //                 "Beni Suef",
-    //                 "Dakahlia",
-    //                 "Damietta",
-    //                 "Faiyum",
-    //                 "Gharbia",
-    //                 "Ismailia",
-    //                 "Kafr El Sheikh",
-    //                 "Luxor",
-    //                 "Matrouh",
-    //                 "Minya",
-    //                 "Monufia",
-    //                 "New Valley",
-    //                 "North Sinai",
-    //                 "Port Said",
-    //                 "Qalyubia",
-    //                 "Qena",
-    //                 "Red Sea",
-    //                 "Sharqia",
-    //                 "Sohag",
-    //                 "South Sinai",
-    //                 "Suez"
-    //             }
-    //         },
-    //         { "Saudi Arabia", new List<string>
-    //             {
-    //                 "Riyadh",
-    //                 "Makkah",
-    //                 "Medina",
-    //                 "Eastern Province",
-    //                 "Qassim",
-    //                 "Ha'il",
-    //                 "Tabuk",
-    //                 "Northern Borders",
-    //                 "Jazan",
-    //                 "Najran",
-    //                 "Asir",
-    //                 "Al Bahah",
-    //                 "Al Jawf"
-    //             }
-    //         }
-    //     };
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IEmailSender _emailSender;
     private readonly SignInManager<ApplicationUser> _signInManager;
@@ -150,33 +98,41 @@ public class AccountController:Controller
         return RedirectToAction("Index", "Home");
     }
     
+    // [HttpGet]
+    // public JsonResult GetCities(string country)
+    // {
+    //     if (Dictionary.CountriesWithCities.ContainsKey(country))
+    //         return Json(Dictionary.CountriesWithCities[country]);
+    //
+    //     return Json(new List<string>());
+    // }
+
+    
+    
     [HttpGet]
-    public JsonResult GetCities(string country)
+    public IActionResult Register()
     {
-        if (Dictionary.CountriesWithCities.ContainsKey(country))
-            return Json(Dictionary.CountriesWithCities[country]);
-
-        return Json(new List<string>());
-    }
-
-    
-    
-    [HttpGet]
-    public IActionResult Register(){
-        var vm = new RegisterVM
-        {
-            CountryList = Dictionary.CountriesWithCities.Keys.ToList(),  // غيرت من Countries
-            CityList = new List<string>()  // غيرت من Cities
-        };
+        var vm = new RegisterVM();
         return View(vm);
     }
 
     [HttpPost]
     public async Task<IActionResult> Register(RegisterVM vm)
     {
-        var user = vm.Adapt<ApplicationUser>();
-        user.UserName = vm.Email;
-        var Don = await _userManager.CreateAsync(user,vm.Password);
+        if (!ModelState.IsValid)
+        {
+            TempData["Error"] = "Please fill all required fields correctly";
+            return View(vm);
+        }
+        
+        var user = new ApplicationUser
+        {
+            Name = vm.Name,
+            Email = vm.Email,
+            UserName = vm.Email
+        };
+        
+        var Don = await _userManager.CreateAsync(user, vm.Password);
         
         if (Don.Succeeded)
         {
@@ -228,7 +184,14 @@ public class AccountController:Controller
             return RedirectToAction(nameof(Mail));
             
         }
-        TempData ["Error"]  = "User creation failed";
+        
+        // إضافة الأخطاء من Identity إلى ModelState
+        foreach (var error in Don.Errors)
+        {
+            ModelState.AddModelError(string.Empty, error.Description);
+        }
+        
+        TempData["Error"] = "User creation failed: " + string.Join(", ", Don.Errors.Select(e => e.Description));
         return View(vm);
         
     }

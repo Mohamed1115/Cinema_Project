@@ -32,8 +32,8 @@ public class Program
         {
             // Password settings
             options.Password.RequireDigit = true;
-            options.Password.RequireLowercase = true;
-            options.Password.RequireUppercase = true;
+            options.Password.RequireLowercase = false;
+            options.Password.RequireUppercase = false;
             options.Password.RequireNonAlphanumeric = false;
             options.Password.RequiredLength = 6;
             
@@ -44,7 +44,7 @@ public class Program
             
             // User settings
             options.User.RequireUniqueEmail = true;
-            options.SignIn.RequireConfirmedEmail = false; // تعطيل تأكيد البريد للاختبار
+            options.SignIn.RequireConfirmedEmail = true; // تعطيل تأكيد البريد للاختبار
         })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();

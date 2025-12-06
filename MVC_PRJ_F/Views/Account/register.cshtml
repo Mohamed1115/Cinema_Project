@@ -112,28 +112,6 @@
                         </div>
 
                         <div class="mb-3">
-                          <label for="country" class="form-label">Country</label>
-                          <select id="country" name="Country" class="form-select" asp-for="Country">
-                            <option value="">-- Select Country --</option>
-                            @foreach (var country in Model.CountryList)
-                            {
-                              <option value="@country">@country</option>
-                            }
-                          </select>
-                          <span asp-validation-for="Country" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                          <label for="city" class="form-label">City</label>
-                          <select id="city" name="City" class="form-select" asp-for="City">
-                            <option value="">-- Select City --</option>
-                          </select>
-                          <span asp-validation-for="City" class="text-danger"></span>
-                        </div>
-
-
-    
-                        <div class="mb-3">
                           <label class="form-label" for="card-email">Email address</label>
                           <input class="form-control" asp-for="@Model.Email" type="email" id="card-email" />
                           <span asp-validation-for="@Model.Email" class="text-danger"></span>
@@ -309,30 +287,7 @@
     <script src="~/vendors/lodash/lodash.min.js"></script>
     <script src="~/vendors/list.js/list.min.js"></script>
     <script src="~/assets/js/theme.js"></script>
-    <script>
-        document.getElementById('country').addEventListener('change', function() {
-            const country = this.value;
-            const cityDropdown = document.getElementById('city');
-            
-            // مسح المدن القديمة
-            cityDropdown.innerHTML = '<option value="">-- Select City --</option>';
-            
-            if (country) {
-                // جلب المدن من السيرفر
-                fetch('@Url.Action("GetCities")?country=' + encodeURIComponent(country))
-                    .then(response => response.json())
-                    .then(cities => {
-                        cities.forEach(city => {
-                            const option = document.createElement('option');
-                            option.value = city;
-                            option.textContent = city;
-                            cityDropdown.appendChild(option);
-                        });
-                    })
-                    .catch(error => console.error('Error:', error));
-            }
-        });
-    </script>
+
 
   </body>
 

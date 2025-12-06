@@ -39,9 +39,13 @@ public class HallController:Controller
     
     [HttpGet]
     [Authorize]
-    public IActionResult Create()
+    public IActionResult Create(int? cinemaId)
     {
         var hall = new Hall();
+        if (cinemaId.HasValue)
+        {
+            hall.CinemaId = cinemaId.Value;
+        }
         return View(hall);
     }
 

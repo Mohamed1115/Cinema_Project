@@ -11,33 +11,55 @@ public class CinemaRepository:Repository<Cinema>, ICinemaRepository
     {
     }
 
+    /// <summary>
+    /// Gets cinema with all movies and their associated halls
+    /// </summary>
     public async Task<Cinema?> GetMovieWithHalls(int id)
     {
-        return await _context.Cinemas
-            .Include(a => a.Movies)
-            .ThenInclude(m => m.Hall)
-            .FirstOrDefaultAsync(a => a.Id == id);
+        try
+        {
+            return await _context.Cinemas
+                .Include(c => c.Movies)
+                    .ThenInclude(cm => cm.Movie)
+                .Include(c => c.Movies)
+                    .ThenInclude(cm => cm.Hall)
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
+        catch (Exception)
+        {
+            return null;
+        }
     }
     
+    /// <summary>
+    /// Gets cinema with halls and unique movies (no duplicates)
+    /// </summary>
     public async Task<Cinema?> GetCinemaWithMovies(int id)
     {
-        var cinema = await _context.Cinemas
-            .Include(c => c.Movies)
-            .ThenInclude(cm => cm.Movie)
-            .FirstOrDefaultAsync(c => c.Id == id);
-
-        if (cinema != null)
+        try
         {
-            // إزالة التكرارات بحسب MovieId
-            cinema.Movies = cinema.Movies
-                .GroupBy(cm => cm.MovieId)
-                .Select(g => g.First())
-                .ToList();
+            var cinema = await _context.Cinemas
+                .Include(c => c.Halls)
+                .Include(c => c.Movies)
+                    .ThenInclude(cm => cm.Movie)
+                .Include(c => c.Movies)
+                    .ThenInclude(cm => cm.Hall)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            // Remove duplicate movies (group by MovieId and take first)
+            if (cinema?.Movies != null)
+            {
+                cinema.Movies = cinema.Movies
+                    .GroupBy(cm => cm.MovieId)
+                    .Select(g => g.First())
+                    .ToList();
+            }
+
+            return cinema;
         }
-
-        return cinema;
+        catch (Exception)
+        {
+            return null;
+        }
     }
-    
-    
-
 }

@@ -9,9 +9,8 @@ public class Cinema
     public string Country { get; set; }
     public string Phone { get; set; }
     public string Email { get; set; }
-    public string Image { get; set; }
-    public List<Hall> Halls { get; set; }
-    public List<CinemaMovies> Movies { get; set; }
-    // public List<CinemaMovies> Cinemas { get; set; }
+    public string? Image { get; set; }  // ← nullable
+    public List<Hall>? Halls { get; set; }  // ← nullable
+    public List<CinemaMovies>? Movies { get; set; }  // ← nullable
     
 }
