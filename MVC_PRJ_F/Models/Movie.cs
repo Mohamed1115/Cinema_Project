@@ -21,7 +21,8 @@ public class Movie
     [Range(1, 10, ErrorMessage = "Duration must be between 1 and 10 hours")]
     public int Time  { get; set; }
     
-    public List<MovImage>  SubImages { get; set; }
+    public List<MovImage>? SubImages { get; set; }
     public List<MoveActor>? Actors { get; set; }
     public List<MoveCategory>? Categories { get; set; }
+    public List<CinemaMovies>? CinemaMovies { get; set; }  // ← Shows where this movie is playing
 }

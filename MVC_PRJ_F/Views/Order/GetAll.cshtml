@@ -1,0 +1,195 @@
+@model List<Cart>
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+    int grandTotal = Model?.Sum(c => c.TotalPrice) ?? 0;
+}
+
+<div class="container py-4">
+    <div class="d-flex align-items-center mb-4">
+        <h2 class="mb-0">
+            <i class="fas fa-shopping-cart me-2 text-primary"></i>Your Cart
+        </h2>
+        <span class="badge bg-light text-dark ms-3 fs-6">@Model?.Count items</span>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-0">
+                        @foreach (var item in Model)
+                        {
+                            <div class="p-3 border-bottom hover-bg-light transition-base">
+                                <div class="row align-items-center">
+                                    <!-- Movie Image -->
+                                    <div class="col-auto">
+                                        @if (!string.IsNullOrEmpty(item.CinemaMovie?.Movie?.MainImage))
+                                        {
+                                            <img src="~/images/MovieImage/@item.CinemaMovie.Movie.MainImage" 
+                                                 alt="@item.CinemaMovie.Movie.Title" 
+                                                 class="rounded"
+                                                 style="width: 80px; height: 120px; object-fit: cover;">
+                                        }
+                                        else
+                                        {
+                                            <div class="bg-light rounded d-flex align-items-center justify-content-center" 
+                                                 style="width: 80px; height: 120px;">
+                                                <i class="fas fa-film fa-2x text-muted"></i>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <!-- Details -->
+                                    <div class="col">
+                                        <h5 class="mb-1">
+                                            <a href="@Url.Action("GetById", "Movie", new { id = item.CinemaMovie?.MovieId })" 
+                                               class="text-decoration-none text-dark">
+                                                @item.CinemaMovie?.Movie?.Title
+                                            </a>
+                                        </h5>
+                                        <div class="text-muted small mb-2">
+                                            <i class="fas fa-map-marker-alt me-1"></i>
+                                            @item.CinemaMovie?.Cinema?.Name
+                                            <span class="mx-1">•</span>
+                                            <i class="fas fa-door-open me-1"></i>
+                                            @(item.CinemaMovie?.Hall?.Name ?? "Hall")
+                                        </div>
+                                        <div class="text-muted small">
+                                            <i class="fas fa-clock me-1"></i>
+                                            @item.CinemaMovie?.Time.ToString("hh:mm tt")
+                                        </div>
+                                    </div>
+
+                                    <!-- Quantity & Price -->
+                                    <div class="col-md-3 text-md-end mt-3 mt-md-0">
+                                        <form asp-action="UpdateCart" method="post" class="d-flex align-items-center justify-content-md-end gap-2 mb-2">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <input type="number" name="Quantity" value="@item.Quantity" 
+                                                   min="1" max="10" 
+                                                   class="form-control form-control-sm text-center" 
+                                                   style="width: 70px;" 
+                                                   onchange="this.form.submit()">
+                                        </form>
+                                        <div class="fw-bold text-primary">
+                                            @item.TotalPrice EGP
+                                        </div>
+                                        <small class="text-muted">
+                                            (@item.CinemaMovie?.Price EGP / ticket)
+                                        </small>
+                                    </div>
+
+                                    <!-- Remove -->
+                                    <div class="col-auto mt-3 mt-md-0">
+                                        <a href="@Url.Action("RemoveFromCart", "Order", new { id = item.Id })" 
+                                           class="btn btn-outline-danger btn-sm rounded-circle p-2"
+                                           title="Remove from cart">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-0 py-3">
+                        <h5 class="mb-0">Order Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Subtotal</span>
+                            <span class="fw-bold">@ViewBag.TotalCarts EGP</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-muted">Booking Fees</span>
+                            <span class="fw-bold text-success">Free</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="h5 mb-0">Total</span>
+                            <span class="h5 mb-0 text-primary">@ViewBag.TotalCarts EGP</span>
+                        </div>
+
+                        <!-- Coupon Section -->
+                        @{
+                            var appliedCoupon = Model.FirstOrDefault(c => c.Coupon != null)?.Coupon;
+                            int discount = 0;
+                            if (appliedCoupon != null)
+                            {
+                                discount = appliedCoupon.DiscountAmount;
+                                <div class="alert alert-success p-2 mb-3 small">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span>
+                                            <i class="fas fa-tag me-1"></i>Coupon <strong>@appliedCoupon.Code</strong> applied
+                                        </span>
+                                        <form asp-action="RemoveCoupon" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-link btn-sm p-0 text-danger text-decoration-none">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="mt-1">
+                                        Discount: <strong>-@discount EGP</strong>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mb-4 border-top pt-2">
+                                    <span class="h5 mb-0">Final Total</span>
+                                    <span class="h5 mb-0 text-success">@(Math.Max(0, grandTotal - discount)) EGP</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <form asp-action="ApplyCoupon" method="post" class="mb-3">
+                                    <div class="input-group">
+                                        <input type="text" name="code" class="form-control" placeholder="Coupon Code" required>
+                                        <button class="btn btn-outline-secondary" type="submit">Apply</button>
+                                    </div>
+                                </form>
+                            }
+                        }
+
+                        <div class="d-grid gap-2">
+                            <a href="@Url.Action("Pay", "Order")" class="btn btn-primary btn-lg">
+                                <i class="fas fa-lock me-2"></i>Checkout
+                            </a>
+                            <a href="@Url.Action("Index", "Movie")" class="btn btn-outline-secondary">
+                                Continue Shopping
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" 
+                     style="width: 100px; height: 100px;">
+                    <i class="fas fa-shopping-cart fa-3x text-muted"></i>
+                </div>
+            </div>
+            <h3>Your cart is empty</h3>
+            <p class="text-muted mb-4">Looks like you haven't added any movies yet.</p>
+            <a href="@Url.Action("Index", "Movie")" class="btn btn-primary btn-lg">
+                <i class="fas fa-film me-2"></i>Browse Movies
+            </a>
+        </div>
+    }
+</div>
+
+<style>
+    .hover-bg-light:hover {
+        background-color: rgba(var(--bs-light-rgb), 0.5);
+    }
+    .transition-base {
+        transition: all 0.2s ease-in-out;
+    }
+</style>

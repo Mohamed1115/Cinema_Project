@@ -26,9 +26,9 @@ public class Repository<T> : IRepository<T> where T : class
         return await _context.Set<T>().ToListAsync(cn);
     }
 
-    public async Task<T?> GetByIdAsync(int id, CancellationToken cn = default)
+    public async Task<T> GetByIdAsync(int? id, CancellationToken cn = default)
     {
-        return await _context.Set<T>().FindAsync(cn, id);
+        return await _context.Set<T>().FindAsync(id, cn);  // ← Fixed: id first, then cn
     }
     
     public async Task<bool> IsOtpExpiredAsync(string email, string code)

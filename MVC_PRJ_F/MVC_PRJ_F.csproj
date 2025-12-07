@@ -3,6 +3,7 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>b92a23da-2222-401a-870d-eabd30449b7e</UserSecretsId>
     </PropertyGroup>
     <ItemGroup>
       <TypeScriptCompile Include="wwwroot\vendors\tinymce\tinymce.d.ts" />
@@ -16,6 +17,7 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+      <PackageReference Include="Stripe.net" Version="50.1.0-beta.1" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="wwwroot\images\ActorImage\" />

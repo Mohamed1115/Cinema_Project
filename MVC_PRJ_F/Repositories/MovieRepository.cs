@@ -18,6 +18,10 @@ public class MovieRepository:Repository<Movie>,IMovieRepository
                 .ThenInclude(ma => ma.Actor)
             .Include(m => m.Categories)
                 .ThenInclude(mc => mc.Category)
+            .Include(m => m.CinemaMovies)
+                .ThenInclude(cm => cm.Cinema)
+            .Include(m => m.CinemaMovies)
+                .ThenInclude(cm => cm.Hall)
             .FirstOrDefaultAsync(m => m.Id == id);
     }
 

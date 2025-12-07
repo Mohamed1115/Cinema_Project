@@ -22,9 +22,10 @@ public class CinemaMovieRepository:Repository<CinemaMovies>, ICinemaMovieReposit
     public async Task<List<CinemaMovies>> GetAllByMovieId(int id)
     {
         return await  _context.CinemaMovies
-            .Where(c => c.CinemaId == id)
             .Where(c => c.MovieId == id)
+            .Include(a => a.Cinema)
             .Include(a => a.Hall)
+            .Include(a => a.Movie)
             .ToListAsync();
     }
 }

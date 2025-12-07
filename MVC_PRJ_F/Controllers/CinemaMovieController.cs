@@ -9,11 +9,13 @@ public class CinemaMovieController:Controller
 {
     private readonly ICinemaMovieRepository _cinemaMovieRepository;
     private readonly IMovieRepository _movieRepository;
+    private readonly IHallRepository _hallRepository;
     
-    public CinemaMovieController(ICinemaMovieRepository cinemaMovieRepository, IMovieRepository movieRepository)
+    public CinemaMovieController(ICinemaMovieRepository cinemaMovieRepository, IMovieRepository movieRepository, IHallRepository hallRepository)
     {
         _cinemaMovieRepository = cinemaMovieRepository;
         _movieRepository = movieRepository;
+        _hallRepository = hallRepository;
     }
     
     [HttpGet]
@@ -28,6 +30,13 @@ public class CinemaMovieController:Controller
     public async Task<IActionResult> GetAllByMovieId(int id)
     {
         var cm = await _cinemaMovieRepository.GetAllByMovieId(id);
+        
+        // Ensure we have movie details for the header, even if no showtimes exist
+        var movie = await _movieRepository.GetByIdAsync(id);
+        if (movie == null) return NotFound();
+        
+        ViewBag.Movie = movie;
+        
         return View(cm);
     }
     
@@ -51,6 +60,7 @@ public class CinemaMovieController:Controller
         if (hallId.HasValue)
         {
             cinemaMovie.HallId = hallId.Value;
+            
         }
         
         if (cinemaId.HasValue)
@@ -84,6 +94,20 @@ public class CinemaMovieController:Controller
                 var movies = await _movieRepository.GetAllAsync();
                 ViewBag.Movies = movies;
                 
+                return View(cinemaMovie);
+            }
+            
+            // Get Hall Capacity for available seats
+            var hall = await _hallRepository.GetByIdAsync(cinemaMovie.HallId);
+            if (hall != null)
+            {
+                cinemaMovie.Quantity = hall.Capacity;
+            }
+            else
+            {
+                TempData["Error"] = "Selected hall does not exist.";
+                var movies = await _movieRepository.GetAllAsync();
+                ViewBag.Movies = movies;
                 return View(cinemaMovie);
             }
 

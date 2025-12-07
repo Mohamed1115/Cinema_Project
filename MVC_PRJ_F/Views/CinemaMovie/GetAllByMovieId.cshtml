@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Movie Showtimes";
-    var movie = Model.FirstOrDefault()?.Movie;
+    var movie = ViewBag.Movie as Movie;
 }
 
 <div class="container py-4">
@@ -90,6 +90,13 @@
                                         <i class="fas fa-door-open me-2 text-muted"></i>
                                         <strong>Hall:</strong> @(show.Hall?.Name ?? "Hall #" + show.HallId)
                                     </p>
+                                    
+                                    <!-- Available Seats -->
+                                    <p class="mb-2">
+                                        <i class="fas fa-chair me-2 text-muted"></i>
+                                        <strong>Available Seats:</strong> 
+                                        <span class="badge bg-info">@show.Quantity</span>
+                                    </p>
 
                                     <!-- Showtime -->
                                     <p class="mb-2">
@@ -105,7 +112,7 @@
 
                                     <!-- Book Button -->
                                     <div class="d-grid">
-                                        <a href="#" class="btn btn-primary">
+                                        <a href="@Url.Action("AddToCart", "Order", new { id = show.Id })" class="btn btn-primary">
                                             <i class="fas fa-ticket-alt me-1"></i>Book Now
                                         </a>
                                     </div>
@@ -126,7 +133,16 @@
 
     <!-- Back Button -->
     <div class="mt-4">
-        <a href="@Url.Action("Index", "Movie")" class="btn btn-outline-secondary">
+        @{
+            var firstShow = Model.FirstOrDefault();
+        }
+        @if (firstShow != null)
+        {
+            <a href="@Url.Action("GetById", "Cinema", new { id = firstShow.CinemaId })" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Back to Cinema
+            </a>
+        }
+        <a href="@Url.Action("Index", "Movie")" class="btn btn-outline-secondary ms-2">
             <i class="fas fa-arrow-left me-1"></i>Back to Movies
         </a>
     </div>

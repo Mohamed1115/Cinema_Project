@@ -23,6 +23,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<CinemaMovies> CinemaMovies { get; set; }
     public DbSet<Hall> Halls { get; set; }
     public DbSet<MoveCategory> MoveCategories { get; set; }
+    public DbSet<Cart> Carts { get; set; }
+    public DbSet<Coupon> Coupons { get; set; }
 
     public DbSet<Otp> Otps { get; set; }
     // DbSet<Movie> Movies { get; set; }
@@ -45,7 +47,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<CinemaMovies>()
             .HasOne(cm => cm.Movie)
-            .WithMany() // أو WithMany(m => m.CinemaMovies) لو عايز في Movie
+            .WithMany(m => m.CinemaMovies) // ← Fixed: Map to the new navigation property
             .HasForeignKey(cm => cm.MovieId)
             .OnDelete(DeleteBehavior.Restrict);
 

@@ -12,5 +12,9 @@ public class CinemaMovies
 
     public int HallId { get; set; }
     public Hall? Hall { get; set; }  // ← Made nullable (navigation property)
+    
+    // Available seats for this show (initialized from Hall.Capacity when creating a show)
+    public int Quantity { get; set; }
+    
     public TimeOnly Time { get; set; }
 }

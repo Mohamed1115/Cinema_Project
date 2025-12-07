@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using MVC_PRJ_F.IRepositories;
 using MVC_PRJ_F.Models;
 using MVC_PRJ_F.Repositories;
+using Stripe;
 
 namespace MVC_PRJ_F;
 
@@ -63,7 +64,11 @@ public class Program
         builder.Services.AddScoped<ICinemaRepository, CinemaRepository>();
         builder.Services.AddScoped<ICinemaMovieRepository, CinemaMovieRepository>();
         builder.Services.AddScoped<IHallRepository, HallRepository>();
+        builder.Services.AddScoped<ICartRepository, CartRepository>();
+        builder.Services.AddScoped<ICouponRepository, CouponRepository>();
 
+        StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+        
 
         var app = builder.Build();
 

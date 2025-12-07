@@ -4,6 +4,7 @@ using MVC_PRJ_F.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MVC_PRJ_F.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251206133453_upquantity")]
+    partial class upquantity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,9 +74,6 @@ namespace MVC_PRJ_F.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TotalCarts")
-                        .HasColumnType("int");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -120,41 +120,6 @@ namespace MVC_PRJ_F.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Actors");
-                });
-
-            modelBuilder.Entity("MVC_PRJ_F.Models.Cart", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CinemaMovieId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CouponId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TotalPrice")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CinemaMovieId");
-
-                    b.HasIndex("CouponId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Carts");
                 });
 
             modelBuilder.Entity("MVC_PRJ_F.Models.Category", b =>
@@ -257,32 +222,6 @@ namespace MVC_PRJ_F.Migrations
                     b.HasIndex("MovieId");
 
                     b.ToTable("CinemaMovies");
-                });
-
-            modelBuilder.Entity("MVC_PRJ_F.Models.Coupon", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("DiscountAmount")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ExpiryDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Coupons");
                 });
 
             modelBuilder.Entity("MVC_PRJ_F.Models.Hall", b =>
@@ -576,31 +515,6 @@ namespace MVC_PRJ_F.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("MVC_PRJ_F.Models.Cart", b =>
-                {
-                    b.HasOne("MVC_PRJ_F.Models.CinemaMovies", "CinemaMovie")
-                        .WithMany()
-                        .HasForeignKey("CinemaMovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MVC_PRJ_F.Models.Coupon", "Coupon")
-                        .WithMany()
-                        .HasForeignKey("CouponId");
-
-                    b.HasOne("MVC_PRJ_F.Data.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CinemaMovie");
-
-                    b.Navigation("Coupon");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("MVC_PRJ_F.Models.CinemaMovies", b =>
                 {
                     b.HasOne("MVC_PRJ_F.Models.Cinema", "Cinema")
@@ -616,7 +530,7 @@ namespace MVC_PRJ_F.Migrations
                         .IsRequired();
 
                     b.HasOne("MVC_PRJ_F.Models.Movie", "Movie")
-                        .WithMany("CinemaMovies")
+                        .WithMany()
                         .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -764,8 +678,6 @@ namespace MVC_PRJ_F.Migrations
                     b.Navigation("Actors");
 
                     b.Navigation("Categories");
-
-                    b.Navigation("CinemaMovies");
 
                     b.Navigation("SubImages");
                 });
